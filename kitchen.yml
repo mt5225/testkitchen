@@ -1,107 +1,29 @@
+# Configure the driver (cloud/hypervisor)
 driver:
-  name: dokken
-  privileged: true # because Docker and SystemD/Upstart
-  chef_version: <%= ENV['CHEF_VERSION'] || 'current' %>
+  name: vagrant 
+  provider: virtualbox
 
-transport:
-  name: dokken
-
+# Configure the provisioner (config management)
 provisioner:
-  name: dokken
-  deprecations_as_errors: true
+  name: chef_zero 
   chef_license: 'accept'
 
+# Configure the verifier (testing framework)
 verifier:
   name: inspec
 
 platforms:
-- name: amazonlinux
-  driver:
-    image: dokken/amazonlinux
-    pid_one_command: /sbin/init
+  - name: ubuntu-16.04
+  - name: centos-7
 
-- name: amazonlinux-2
-  driver:
-    image: dokken/amazonlinux-2
-    pid_one_command: /sbin/init
-
-- name: debian-8
-  driver:
-    image: dokken/debian-8
-    pid_one_command: /bin/systemd
-    intermediate_instructions:
-      - RUN /usr/bin/apt-get update
-
-- name: debian-9
-  driver:
-    image: dokken/debian-9
-    pid_one_command: /bin/systemd
-    intermediate_instructions:
-      - RUN /usr/bin/apt-get update
-
-- name: debian-10
-  driver:
-    image: dokken/debian-10
-    pid_one_command: /bin/systemd
-    intermediate_instructions:
-      - RUN /usr/bin/apt-get update
-
-- name: centos-6
-  driver:
-    image: dokken/centos-6
-    pid_one_command: /sbin/init
-
-- name: centos-7
-  driver:
-    image: dokken/centos-7
-    pid_one_command: /usr/lib/systemd/systemd
-    intermediate_instructions:
-      - RUN touch /etc/fstab
-
-- name: fedora-latest
-  driver:
-    image: dokken/fedora-latest
-    pid_one_command: /usr/lib/systemd/systemd
-    intermediate_instructions:
-      - RUN touch /etc/fstab
-
-- name: ubuntu-14.04
-  driver:
-    image: dokken/ubuntu-14.04
-    pid_one_command: /sbin/init
-    intermediate_instructions:
-      - RUN /usr/bin/apt-get update
-
-- name: ubuntu-16.04
-  driver:
-    image: dokken/ubuntu-16.04
-    pid_one_command: /bin/systemd
-    intermediate_instructions:
-      - RUN /usr/bin/apt-get update
-
-- name: ubuntu-18.04
-  driver:
-    image: dokken/ubuntu-18.04
-    pid_one_command: /bin/systemd
-    intermediate_instructions:
-      - RUN /usr/bin/apt-get update
-
-- name: opensuse-leap-42
-  driver:
-    image: dokken/opensuse-leap
-    pid_one_command: /bin/systemd
-
-- name: opensuse-leap-15
-  driver:
-    image: dokken/opensuse-leap
-    pid_one_command: /bin/systemd
-
-
-
+# Enumerate suites
 suites:
+  # The name of each suite maps to a configuration / set of tests
+  # Depending on the verifier, default locations may be inferred based on
+  # directory naming
   - name: default
     includes:
-      - ubuntu-16.04
+       - ubuntu-16.04 
     verifier:
       inspec_tests:
         - test/integration/default
